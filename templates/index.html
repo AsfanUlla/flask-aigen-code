@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Hello World</title>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            :root {
+                --primary-color: #3498db;
+                --secondary-color: #2ecc71;
+                --background-color: #f5f6fa;
+                --text-color: #2c3e50;
+                --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: "Poppins", sans-serif;
+                background-color: var(--background-color);
+                color: var(--text-color);
+                line-height: 1.6;
+            }
+
+            .container {
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+
+            h1 {
+                text-align: center;
+                color: var(--primary-color);
+                margin: 40px 0;
+                font-size: 2.5em;
+                font-weight: 600;
+            }
+
+            h2 {
+                color: var(--text-color);
+                margin: 30px 0 20px;
+                font-weight: 500;
+            }
+
+            .comment-form {
+                background: white;
+                padding: 30px;
+                border-radius: 10px;
+                box-shadow: var(--shadow);
+                margin-bottom: 40px;
+            }
+
+            .form-group {
+                margin-bottom: 20px;
+            }
+
+            label {
+                display: block;
+                margin-bottom: 8px;
+                color: var(--text-color);
+                font-weight: 500;
+            }
+
+            input[type="text"],
+            textarea {
+                width: 100%;
+                padding: 12px;
+                border: 2px solid #e0e0e0;
+                border-radius: 6px;
+                font-size: 16px;
+                transition: border-color 0.3s ease;
+                font-family: "Poppins", sans-serif;
+            }
+
+            input[type="text"]:focus,
+            textarea:focus {
+                outline: none;
+                border-color: var(--primary-color);
+            }
+
+            textarea {
+                min-height: 100px;
+                resize: vertical;
+            }
+
+            button {
+                background-color: var(--primary-color);
+                color: white;
+                padding: 12px 24px;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 16px;
+                font-weight: 500;
+                transition:
+                    transform 0.2s ease,
+                    background-color 0.2s ease;
+            }
+
+            button:hover {
+                transform: translateY(-2px);
+                background-color: #2980b9;
+            }
+
+            .comment {
+                background: white;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: var(--shadow);
+                margin-bottom: 20px;
+                transition: transform 0.2s ease;
+            }
+
+            .comment:hover {
+                transform: translateY(-2px);
+            }
+
+            .comment-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 10px;
+            }
+
+            .author {
+                font-weight: 600;
+                color: var(--primary-color);
+            }
+
+            .timestamp {
+                color: #95a5a6;
+                font-size: 0.9em;
+            }
+
+            .comment-content {
+                margin-bottom: 15px;
+                line-height: 1.6;
+            }
+
+            .upvote-btn {
+                background-color: var(--secondary-color);
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+
+            .upvote-btn:hover {
+                background-color: #27ae60;
+            }
+
+            .error {
+                background-color: #ff7675;
+                color: white;
+                padding: 10px;
+                border-radius: 6px;
+                margin-bottom: 20px;
+                display: none;
+            }
+
+            /* Animation for new comments */
+            @keyframes slideIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .new-comment {
+                animation: slideIn 0.3s ease forwards;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Hello World from {{ name }}! 👋</h1>
+
+            <div class="comment-form">
+                <h2>Add a Comment ✍️</h2>
+                <div class="error" id="error-message"></div>
+                <form id="comment-form">
+                    <div class="form-group">
+                        <label for="author">Name</label>
+                        <input
+                            type="text"
+                            id="author"
+                            name="author"
+                            required
+                            placeholder="Enter your name"
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label for="content">Comment</label>
+                        <textarea
+                            id="content"
+                            name="content"
+                            required
+                            placeholder="What's on your mind?"
+                        ></textarea>
+                    </div>
+                    <button type="submit">Post Comment</button>
+                </form>
+            </div>
+
+            <div id="comments-section">
+                <h2>Comments 💭</h2>
+                {% for comment in comments %}
+                <div class="comment" id="comment-{{ comment.id }}">
+                    <div class="comment-header">
+                        <span class="author">{{ comment.author }}</span>
+                        <span class="timestamp"
+                            >{{ comment.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+                            }}</span
+                        >
+                    </div>
+                    <div class="comment-content">{{ comment.content }}</div>
+                    <button
+                        class="upvote-btn"
+                        onclick="upvoteComment({{ comment.id }})"
+                    >
+                        👍 Upvote ({{ comment.upvotes }})
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <script>
+            document.getElementById("comment-form").onsubmit = function (e) {
+                e.preventDefault();
+
+                const formData = new FormData(this);
+
+                fetch("/add_comment", {
+                    method: "POST",
+                    body: formData,
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (data.error) {
+                            const errorElement =
+                                document.getElementById("error-message");
+                            errorElement.style.display = "block";
+                            errorElement.textContent = data.error;
+                        } else {
+                            location.reload();
+                        }
+                    })
+                    .catch((error) => {
+                        const errorElement =
+                            document.getElementById("error-message");
+                        errorElement.style.display = "block";
+                        errorElement.textContent = "An error occurred";
+                    });
+            };
+
+            function upvoteComment(commentId) {
+                fetch(`/upvote/${commentId}`, {
+                    method: "POST",
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (data.upvotes) {
+                            const button = document.querySelector(
+                                `#comment-${commentId} .upvote-btn`,
+                            );
+                            button.innerHTML = `👍 Upvote (${data.upvotes})`;
+                        }
+                    })
+                    .catch((error) => console.error("Error:", error));
+            }
+        </script>
+    </body>
+</html>
